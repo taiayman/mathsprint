@@ -1,0 +1,930 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrollbars */
+}
+
+
+#game-container {
+    min-height: 100vh; /* Use at least the full height of the viewport */
+}
+
+#start-page {
+    background-image: url(../assets/images/game_background.jpg); /* Adjust the path as needed */
+    background-size: cover; /* Cover the entire size of the element */
+    background-position: center; /* Center the background image */
+    background-repeat: no-repeat; /* Do not repeat the background */
+    background-attachment: fixed; /* Make the background fixed during scrolling */
+    overflow: hidden; /* Hide any overflow */
+    position: relative; /* Ensures positioning context */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100vw; /* Full viewport width */
+    height: 100vh; /* Full viewport height */
+    margin: 0;
+    padding: 0;
+
+}
+
+#game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(to bottom right, #6c63ff, #03a9f4);
+    color: #ffffff;
+    perspective: 1000px;
+
+    position: relative;
+    height: 100vh; /* Ensure the container has a defined height */
+    overflow: visible; /* Make sure content is not clipped */
+}
+
+
+
+
+.page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    color: #333333;
+}
+
+.page.hidden {
+    display: none;
+}
+
+
+#start-page {
+
+    background-color: lightgray;
+    background-image: url(../assets/images/game_background.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+    flex-wrap: nowrap;
+    align-content: stretch;
+
+    background-attachment: scroll;
+    height: 100vh; /* This sets the height to 100% of the viewport height */
+    width: 100vw; /* This sets the width to 100% of the viewport width */
+    overflow: hidden; 
+}
+
+
+.button-container {
+    position: absolute; /* Position the button container absolutely */
+    bottom: 20px; /* Adjust the distance from the bottom */
+    display: flex;
+    flex-direction: row;
+    justify-content: center; /* Center buttons horizontally */
+    gap: 10px; /* Space between buttons */
+}
+
+.play-btn {
+    font-family: 'Press Start 2P', cursive;
+    padding: 1rem 1rem;
+    cursor: pointer;
+    background-image: url(../assets/images/button.png);
+    max-width: 240px;
+    height: 80px;
+    background-size: cover;
+    background-position: center;
+    color: #ffffff;
+    border: none;
+    background-color: transparent;
+    border-radius: 0.5rem;
+    justify-content: center;
+    transition: transform 0.3s;
+
+    width: 90%; /* Make button width responsive */
+    margin: 10px 0; /* Adds vertical space between buttons */
+    font-size: 1rem; 
+}
+
+.play-btn:hover {
+    transform: translateY(-4px);
+}
+
+#start-image {
+    margin-top: 70px;
+    width: 100%; /* Adjust the width as needed */
+    height: 300px; /* Adjust the height based on your logo's dimensions */
+    background-image: url('../assets/images/logo.png'); /* Ensure the path is correct */
+    background-position: center; /* Center the background image */
+    background-repeat: no-repeat; /* No repeating of the background image */
+    background-size: contain; /* Adjust this to cover or contain depending on how you want it to display */
+
+    filter: drop-shadow(5px 5px 15px rgba(0, 0, 0, 0.5));
+    
+
+}
+
+
+#play-options {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Ensures horizontal centering */
+    justify-content: center; /* Helps with vertical centering */
+    width: 100%; /* Full width to utilize all space */
+    margin-top: 20px; /* Optional: adds some space above the buttons */
+}
+
+
+@media (max-width: 768px) {
+    .play-btn {
+        padding: 10px 20px; /* Smaller padding for smaller screens */
+    }
+}
+
+
+@media (max-width: 768px) {
+    #start-page {
+        background-attachment: fixed; /* Keep the background image fixed */
+    }
+
+    .button-container {
+        position: fixed; /* Position the button container absolutely */
+        bottom: 20px; /* Adjust the distance from the bottom */
+        left: 50%; /* Position the container horizontally centered */
+        transform: translateX(-50%); /* Adjust horizontal centering */
+        display: flex;
+        flex-direction: row;
+        justify-content: center; /* Center buttons horizontally */
+        gap: 10px; /* Space between buttons */
+        padding: 10px; /* Padding around the buttons */
+        background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+        border-radius: 10px; /* Rounded corners */
+    }
+
+    .play-btn {
+        /* Adjust the size and padding for mobile */
+        padding: 10px 20px; /* Smaller padding */
+        font-size: 1rem; /* Adjust font size */
+        width: auto; /* Let content define width */
+    }
+}
+
+#game-page {
+    background-image: url('../assets/images/game_background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    margin: 0;
+    position: relative; /* Needed for absolute positioning of child */
+}
+
+.background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.074); /* Semi-transparent white background */
+    backdrop-filter: blur(3px); /* This applies the blur */
+}
+
+.ui-elements-container {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    display: flex;
+    align-items: center;
+    z-index: 1;
+
+  }
+  
+  .ui-element {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(to right, #FF9800, #F57C00);
+    padding: 10px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-right: 10px;
+    outline: 3px solid rgb(255, 255, 255);
+
+  }
+  
+  .icon-container {
+    background-color: #fff;
+    color: #F57C00;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+  }
+  
+  .content {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  }
+/* This will position the music toggle to the top right */
+
+#music-toggle {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    z-index: 1;
+  }
+  
+  #music-toggle .ui-element {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(to right, #FF9800, #F57C00);
+    padding: 10px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    outline: 3px solid rgb(255, 255, 255); /* Optional: Add a blue outline */
+  }
+  
+  #music-toggle .icon-container {
+    background-color: #fff;
+    color: #F57C00;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+  }
+  
+  #toggle-music {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+  }
+
+  #toggle-music img {
+    width: 30px;
+    height: 30px;
+}
+
+@media (max-width: 768px) { /* Adjust the max-width as needed for your design */
+    .ui-elements-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centers the items vertically */
+        justify-content: space-around; /* Distributes space around items */
+    }
+
+    .ui-element {
+        width: 100%; /* Makes each UI element take the full width */
+        margin: 10px 0; /* Adds some vertical spacing between elements */
+    }
+
+    #music-toggle .ui-element {
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(to right, #FF9800, #F57C00);
+        padding: 10px 7px;
+        border-radius: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        outline: 3px solid rgb(255, 255, 255); /* Optional: Add a blue outline */
+      }
+    #toggle-music img {
+        width: 30px;
+        height: 30px;
+        transform: translateX(6px);  /* This moves the image 10px to the right */
+    }
+
+    .ui-element {
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(to right, #FF9800, #F57C00);
+        padding: 10px 9px;
+        border-radius: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        outline: 3px solid rgb(255, 255, 255);
+    }
+
+    #timer span {
+        transform: translateX(6px); /* Moves the span 6px to the right */
+    }
+    #start-page {
+        background-attachment: fixed; /* Apply fixed only for larger screens */
+    }
+
+    
+}
+
+  
+
+#pvp-text {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    background-color: #fff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: none; /* Hide by default */
+}
+
+
+#game-board {
+    transform: perspective(1000px) rotateX(39deg);
+    transform-origin: bottom;
+    transform-style: preserve-3d;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    padding-top: 130px;
+    margin-bottom: 8rem;
+
+    position: relative;
+}
+
+#players-hand {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 4rem;
+    gap: 33px;
+    position: relative;
+    height: 180px; /* Adjust if necessary */
+    overflow: visible; /* Show overlapped parts of cards */
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centers content vertically in column layout */
+    align-items: center; /* Centers content horizontally */
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.8rem;
+    height: 180px;
+    position: relative; /* Needed for absolute positioning of child elements */
+    width: 118px;
+    font-size: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: -5px -5px 10px rgba(0, 0, 0, 0.2), 5px 5px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, box-shadow 0.3s; /* Corrected shadow transition duration */
+    transform-style: preserve-3d;
+    will-change: transform;
+    padding: 0.5rem;
+    transform-origin: bottom center; 
+    touch-action: manipulation; /* Ensures better handling on touch devices */
+}
+
+.card img {
+    width: 80px; /* Adjust size as needed */
+    height: auto;
+    border-radius: 60%; /* Circular images */
+}
+
+.card-image {
+    width: 100%; /* Make the image fill the card */
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.card-value-overlay {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    color: rgb(35, 35, 35);
+    font-size: 1.5em;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Apply the fade-in animation to the player's hand cards only */
+#players-hand .card {
+    animation: fadeInCards 0.5s ease-out forwards;
+    animation-delay: var(--animation-delay, 0s); /* Use a custom property for delay */
+}
+
+
+
+@keyframes fadeInCards {
+    from {
+        opacity: 0; /* Start fully transparent */
+    }
+    to {
+        opacity: 1; /* Fade to fully opaque */
+    }
+}
+
+
+/* Staggering the animation with specific delays and transformations */
+#players-hand .card:nth-child(1) {
+    animation-delay: 0.1s;
+    transform: rotate(-20deg) translateX(-100px);
+}
+#players-hand .card:nth-child(2) {
+    animation-delay: 0.2s;
+    transform: rotate(-10deg) translateX(-50px);
+}
+#players-hand .card:nth-child(3) {
+    animation-delay: 0.3s;
+    transform: rotate(0deg) translateX(0);
+}
+#players-hand .card:nth-child(4) {
+    animation-delay: 0.4s;
+    transform: rotate(10deg) translateX(50px);
+}
+#players-hand .card:nth-child(5) {
+    animation-delay: 0.5s;
+    transform: rotate(20deg) translateX(100px);
+}
+
+
+.card .card-value {
+    position: absolute;
+    top: 5px; /* Adjust as needed */
+    left: 8px; /* Adjust as needed */
+    /* Add styles for the card value text */
+}
+.correct-message {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Add other styling for the correct message text as desired */
+}
+
+
+.card.top-row {
+    transform: rotateX(-15deg); /* This value should be larger than the bottom row */
+}
+
+.card.bottom-row {
+    transform: rotateX(-5deg); /* This value should be smaller than the top row */
+}
+
+
+.card .card-value {
+    align-self: flex-start; /* this may not be needed if there's no flexbox applied within the card itself */
+    width: 100%; /* ensures the text container spans the full width of the card */
+    text-align: left;
+}
+
+
+.card.dragging {
+    transform: translateZ(20px) rotateX(10deg) rotateY(10deg);
+    box-shadow: 0 16px 24px rgba(0, 0, 0, 0.2), 0 6px 8px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+}
+.card.played {
+    animation: playCard 0.5s forwards;
+}
+
+.card:hover, .card.selected {
+    transform: translateY(-10px) scale(1.1); /* Enhance interactivity with visual cues */
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.25);
+}
+
+@keyframes playCard {
+    to {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+}
+
+.card.correct {
+    background-color: green; /* Green background for correct answers */
+    color: white; /* White text for better visibility */
+}
+
+.card.incorrect {
+    background-color: red; /* Red background for incorrect answers */
+    color: white; /* White text for better visibility */
+}
+
+
+.page.hidden {
+    display: none;
+}
+
+/* Miscellaneous */
+.hidden {
+    display: none !important;
+}
+
+button:focus {
+    outline: none;
+}
+
+@keyframes selectedCardAnimation {
+    0% {
+      box-shadow: 0 0 0 0px rgba(128, 0, 128, 0.7);
+    }
+    100% {
+      box-shadow: 0 0 0 10px rgba(128, 0, 128, 0);
+    }
+  }
+  
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(128, 0, 128, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(128, 0, 128, 0);
+    }
+}
+
+#game-board, #players-hand, .card { 
+    position: relative; /* Ensure elements are positioned within the container */
+    z-index: 2; /* Place game elements above the background */ 
+}
+
+
+@media (max-width: 768px) {
+
+
+
+    .card.selected {
+        animation: pulse 5.2s infinite;
+        border: 4px solid purple; /* Add a purple border for a static indication */
+
+        transform: translateX(-50px); /* Adjust as needed */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: Adds a shadow for depth */
+    }
+
+    #game-board, #players-hand, .card { 
+        position: relative; /* Ensure elements are positioned within the container */
+        z-index: 2; /* Place game elements above the background */ 
+    }
+    
+   
+    #game-board {
+        transform: perspective(1000px) rotateX(39deg);
+        transform-origin: bottom;
+        transform-style: preserve-3d;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+        padding-top: 130px;
+        margin-bottom: 8rem;
+
+        position: relative;
+    }
+
+
+    .card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Centers content vertically in column layout */
+        align-items: center; /* Centers content horizontally */
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 0.8rem;
+        height: 180px;
+        width: 118px;
+        font-size: 25px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: -5px -5px 10px rgba(0, 0, 0, 0.2), 5px 5px 15px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s, box-shadow 0.3s; /* Corrected shadow transition duration */
+        transform-style: preserve-3d;
+        will-change: transform;
+        padding: 0.5rem;
+        transform-origin: bottom center; 
+        touch-action: manipulation; /* Ensures better handling on touch devices */
+    }
+    
+    .card img {
+        width: 72px; /* Adjust size as needed */
+        height: auto;
+        border-radius: 50%; /* Circular images */
+    }
+    
+
+
+    .card.correct {
+        background-color: green; /* Green background for correct answers */
+        color: white; /* White text for better visibility */
+        position: relative; /* Position relative to place the central span correctly */
+    }
+    
+    .card.incorrect {
+        background-color: red; /* Red background for incorrect answers */
+        color: white; /* White text for visibility */
+        position: relative; /* Position relative to place the central span correctly */
+    }
+    
+    .card .status-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 16px; /* Adjust based on your design */
+        color: white;
+        font-weight: bold;
+    }
+    .status-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-weight: bold;
+        font-size: 1em; /* Adjust based on your card size */
+    }
+    
+
+    .card .card-value {
+        position: absolute;
+        top: 5px; /* Adjust as needed */
+        left: 8px; /* Adjust as needed */
+        /* Add styles for the card value text */
+    }
+    .correct-message {
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        /* Add other styling for the correct message text as desired */
+    }
+
+    #players-hand {
+        /* ... existing styles ... */
+        height: 160px; /* Adjust if necessary */
+        padding-bottom: 20px; /* To lift cards up */
+    }
+    
+    #players-hand .card {
+        width: 22vw; /* Responsive card width */
+        height: calc(24vw * 1.4); /* Maintain aspect ratio */
+        position: absolute;
+        bottom: 0; /* Align at the bottom of the parent container */
+        left: 47%; /* Start at the center */
+        transform-origin: bottom center; /* Pivot point for rotation */
+        margin-left: -9vw; /* Offset to the left by half the width of the card */
+        touch-action: manipulation; 
+    }
+
+    #players-hand {
+        display: flex;
+        justify-content: center;
+        width: 120%;
+        gap: 33px;
+        position: relative;
+        height: 180px;
+        overflow: visible;
+      }
+
+    /* More open fanned-out effect with less overlapping */
+    #players-hand .card:nth-child(1) { transform: translateX(-100%) rotate(-22deg); z-index: 1; }
+    #players-hand .card:nth-child(2) { transform: translateX(-50%) rotate(-11deg); z-index: 2; }
+    #players-hand .card:nth-child(3) { transform: translateX(0%) rotate(0deg); z-index: 3; }
+    #players-hand .card:nth-child(4) { transform: translateX(50%) rotate(11deg); z-index: 2; }
+    #players-hand .card:nth-child(5) { transform: translateX(100%) rotate(22deg); z-index: 1; }
+
+    /* Continue the pattern if you have more cards, adjust as necessary */
+    #players-hand .card:nth-child(6) { transform: translateX(150%) rotate(33deg); z-index: 1; }
+    /* ...and so on for more cards */
+    
+    .popup button {
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(to right, #FF9800, #F57C00);
+        padding: 10px 15px;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        margin-right: 10px;
+        outline: 3px solid rgb(255, 255, 255);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-family: 'Press Start 2P', cursive;
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.popup {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 70%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.popup button {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(to right, #FF9800, #F57C00);
+    padding: 10px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-right: 10px;
+    outline: 3px solid rgb(255, 255, 255);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.icon-container {
+    background-color: #fff;
+    color: #F57C00;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+}
+
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    text-align: center;
+  }
+  
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .modal-section {
+    display: none;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+
+  #current-increment {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 500px;
+    animation: scaleIn 0.3s ease-in-out;
+    text-align: center;
+  }
+  
+  .modal-content h2 {
+    font-size: 24px;
+    color: #333;
+    margin-top: 0;
+  }
+  
+  .modal-content p {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.5;
+  }
+  
+  .modal-content button {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    background-color: #f89027;
+    color: white;
+    cursor: pointer;
+    margin-top: 20px;
+    margin-right: 10px;
+    transition: background-color 0.2s;
+  }
+  
+  .modal-content button:hover {
+    background-color: #f77b00;
+  }
+  
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.7);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
