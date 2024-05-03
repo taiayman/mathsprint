@@ -377,10 +377,14 @@ html, body {
     width: 100%;
     margin-bottom: 4rem;
     gap: 33px;
+    bottom: 20px;
     position: relative;
     height: 180px; /* Adjust if necessary */
     overflow: visible; /* Show overlapped parts of cards */
+    z-index: 5;
+
 }
+
 
 .card {
     display: flex;
@@ -406,9 +410,9 @@ html, body {
 }
 
 .card img {
-    width: 80px; /* Adjust size as needed */
-    height: auto;
-    border-radius: 60%; /* Circular images */
+    width: 110px;
+    height: 170px;
+    border-radius: 9px;
 }
 
 .card-image {
@@ -427,45 +431,6 @@ html, body {
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
 }
 
-/* Apply the fade-in animation to the player's hand cards only */
-#players-hand .card {
-    animation: fadeInCards 0.5s ease-out forwards;
-    animation-delay: var(--animation-delay, 0s); /* Use a custom property for delay */
-}
-
-
-
-@keyframes fadeInCards {
-    from {
-        opacity: 0; /* Start fully transparent */
-    }
-    to {
-        opacity: 1; /* Fade to fully opaque */
-    }
-}
-
-
-/* Staggering the animation with specific delays and transformations */
-#players-hand .card:nth-child(1) {
-    animation-delay: 0.1s;
-    transform: rotate(-20deg) translateX(-100px);
-}
-#players-hand .card:nth-child(2) {
-    animation-delay: 0.2s;
-    transform: rotate(-10deg) translateX(-50px);
-}
-#players-hand .card:nth-child(3) {
-    animation-delay: 0.3s;
-    transform: rotate(0deg) translateX(0);
-}
-#players-hand .card:nth-child(4) {
-    animation-delay: 0.4s;
-    transform: rotate(10deg) translateX(50px);
-}
-#players-hand .card:nth-child(5) {
-    animation-delay: 0.5s;
-    transform: rotate(20deg) translateX(100px);
-}
 
 
 .card .card-value {
@@ -491,11 +456,15 @@ html, body {
     transform: rotateX(-5deg); /* This value should be smaller than the top row */
 }
 
-
 .card .card-value {
-    align-self: flex-start; /* this may not be needed if there's no flexbox applied within the card itself */
-    width: 100%; /* ensures the text container spans the full width of the card */
-    text-align: left;
+    align-self: flex-start;
+    width: 31px;
+    height: 31px;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    justify-content: center;
+    background-color: #fff;
+    text-align: center;
 }
 
 
@@ -522,12 +491,10 @@ html, body {
 
 .card.correct {
     background-color: green; /* Green background for correct answers */
-    color: white; /* White text for better visibility */
 }
 
 .card.incorrect {
     background-color: red; /* Red background for incorrect answers */
-    color: white; /* White text for better visibility */
 }
 
 
@@ -586,6 +553,15 @@ button:focus {
         z-index: 2; /* Place game elements above the background */ 
     }
     
+    #players-hand .card {
+        transition: transform 0.3s ease;
+    }
+    
+    #players-hand .card.selected {
+        transform: translateY(-10px); /* Moves the card up slightly */
+        /* Increase z-index to ensure the selected card is on top if it overlaps with others */
+        z-index: 4; 
+    }
    
     #game-board {
         transform: perspective(1000px) rotateX(39deg);
@@ -623,23 +599,27 @@ button:focus {
         touch-action: manipulation; /* Ensures better handling on touch devices */
     }
     
+   
     .card img {
-        width: 72px; /* Adjust size as needed */
-        height: auto;
-        border-radius: 50%; /* Circular images */
+        width: 80px;
+        height: 117px;
+        border-radius: 5px;
+    }
+    
+    #game-board .card img {
+        width: 110px;
+        height: 154px;
+        border-radius: 5px;
     }
     
 
-
     .card.correct {
         background-color: green; /* Green background for correct answers */
-        color: white; /* White text for better visibility */
         position: relative; /* Position relative to place the central span correctly */
     }
     
     .card.incorrect {
         background-color: red; /* Red background for incorrect answers */
-        color: white; /* White text for visibility */
         position: relative; /* Position relative to place the central span correctly */
     }
     
@@ -695,6 +675,7 @@ button:focus {
     }
 
     #players-hand {
+        left: 33px;
         display: flex;
         justify-content: center;
         width: 120%;
@@ -705,16 +686,24 @@ button:focus {
       }
 
     /* More open fanned-out effect with less overlapping */
-    #players-hand .card:nth-child(1) { transform: translateX(-100%) rotate(-22deg); z-index: 1; }
-    #players-hand .card:nth-child(2) { transform: translateX(-50%) rotate(-11deg); z-index: 2; }
+    #players-hand .card:nth-child(1) {
+        transform: translateX(-100%) rotate(336deg);
+        z-index: 1;
+    }
     #players-hand .card:nth-child(3) { transform: translateX(0%) rotate(0deg); z-index: 3; }
-    #players-hand .card:nth-child(4) { transform: translateX(50%) rotate(11deg); z-index: 2; }
-    #players-hand .card:nth-child(5) { transform: translateX(100%) rotate(22deg); z-index: 1; }
+    #players-hand .card:nth-child(2) {
+        transform: translateX(-50%) rotate(344deg);
+        z-index: 2;
+    }
+    #players-hand .card:nth-child(4) {
+        transform: translateX(50%) rotate(17deg);
+        z-index: 2;
+    }
+    #players-hand .card:nth-child(5) {
+        transform: translateX(100%) rotate(31deg);
+        z-index: 1;
+    }
 
-    /* Continue the pattern if you have more cards, adjust as necessary */
-    #players-hand .card:nth-child(6) { transform: translateX(150%) rotate(33deg); z-index: 1; }
-    /* ...and so on for more cards */
-    
     .popup button {
         display: inline-flex;
         align-items: center;
@@ -928,3 +917,91 @@ button:focus {
     }
   }
   
+
+
+  #card-stock {
+    position: absolute;
+    left: 37px; /* Adjust based on your layout */
+    bottom: 40px; /* Adjust based on your layout */
+    width: 120px; /* Match your game card size */
+    height: 180px; /* Match your game card size */
+    z-index: 10;
+}
+
+.stock-card {
+    position: absolute;
+    width: 110%;
+    height: 110%;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.8rem;
+    transform: translate(0, -5px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.stock-card img {
+    width: 80px; /* Size of the logo, adjust as needed */
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@media (max-width: 768px) {
+
+    #players-hand {
+        position: relative;
+        transform: translateX(-10%);
+        width: 100%;
+        margin-bottom: 100px;
+        padding-bottom: 30px;
+    }
+
+
+    #card-stock {
+        position: fixed;
+        bottom: -50px;
+        left: 49%;
+        transform: translateX(-50%);
+        width: 90px;
+        height: 135px;
+        z-index: 100;
+    }
+}
+
+
+/* Specific offsets for each card to create the layered effect */
+.stock-card:nth-child(1) { transform: translate(0px, -5px); }
+.stock-card:nth-child(2) { transform: translate(2px, -10px); }
+.stock-card:nth-child(3) { transform: translate(4px, -15px); }
+.stock-card:nth-child(4) { transform: translate(6px, -20px); }
+
+
+
+@keyframes card-stock-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  
+  .card-pile.animate {
+    animation: card-stock-pulse 0.6s ease-out;
+  }
+  
+  .card.dragging {
+    opacity: 0.5; /* Adjust the opacity for visual feedback */
+    position: absolute; /* Make the card positioned absolutely for free movement */
+    z-index: 1000; /* Ensure the card is on top of other elements */
+    pointer-events: none; /* Prevent further interaction while dragging */
+  }
+  
+  .card.drop-target {
+    background-color: rgba(0, 255, 0, 0.3); /* Green semi-transparent background */
+  }
+
+  .is-dragging {
+    opacity: 0.7;
+    transform: scale(1.05);
+}
+
