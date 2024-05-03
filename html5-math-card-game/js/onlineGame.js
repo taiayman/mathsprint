@@ -558,112 +558,120 @@ Array.from(gameBoard.children).forEach(card => {
 });
 }
 
+
 function handleCardTap(event) {
-    const tappedCard = event.target.closest('.card');
-    const isPlayerCard = tappedCard.parentNode.id === 'players-hand';
-    const tappedCardValueSpan = tappedCard.querySelector('.card-value');
-    const boardCardValue = parseInt(tappedCardValueSpan.textContent, 10);
-  
-    if (isPlayerCard && selectedCard !== tappedCard) {
-      // Handle player card selection
+  const tappedCard = event.target.closest('.card');
+  const isPlayerCard = tappedCard.parentNode.id === 'players-hand';
+  const tappedCardValue = parseInt(tappedCard.querySelector('.card-value').textContent, 10);
+
+  if (isPlayerCard) {
+      // Player selects a card from their hand
       if (selectedCard) {
-        selectedCard.classList.remove('selected');
+          selectedCard.classList.remove('selected');
       }
       tappedCard.classList.add('selected');
       selectedCard = tappedCard;
-    } else if (!isPlayerCard && selectedCard) {
-      // Handle board card matching logic
+  } else if (selectedCard) {
+      // Player attempts to match a selected card from their hand with a board card
       const selectedCardValue = parseInt(selectedCard.querySelector('.card-value').textContent, 10);
-      const isCorrect = (selectedCardValue === boardCardValue + INCREMENT_VALUE);
-  
-      if (isCorrect) {
-        // Hide the card value and show "Correct"
-        tappedCardValueSpan.style.visibility = 'hidden';
-  
-        let correctMessageSpan = tappedCard.querySelector('.correct-message');
-        if (!correctMessageSpan) {
-          correctMessageSpan = document.createElement('span');
-          correctMessageSpan.classList.add('correct-message');
-          tappedCard.appendChild(correctMessageSpan);
-        }
-  
-        // Add 'correct' class and remove selection from the card
-        tappedCard.classList.add('correct');
-        selectedCard.classList.remove('selected');
-        selectedCard = null;
-  
-        // Update score in Firebase for the specific player
-        updateScore(playerNumber, 10); 
-  
-        // Check if all cards are correct to move to the next stage
-        if (checkIfAllCardsCorrect()) {
-          moveToNextStage(INCREMENT_VALUE);
-        }
+
+      if (selectedCardValue === tappedCardValue + INCREMENT_VALUE) {
+          // Correct match
+          tappedCard.classList.add('correct');
+          let correctMessageSpan = tappedCard.querySelector('.correct-message');
+          if (!correctMessageSpan) {
+              correctMessageSpan = document.createElement('span');
+              correctMessageSpan.classList.add('correct-message');
+              correctMessageSpan.textContent = "Correct!";
+              tappedCard.appendChild(correctMessageSpan);
+          }
+
+          // Update score
+          updateScore(10);
+
+          // Remove the card from the player's hand
+          if (selectedCard.parentNode) {
+              selectedCard.parentNode.removeChild(selectedCard);
+              selectedCard = null;
+          }
+
+          // Move to the next stage if all cards are correct
+          if (checkIfAllCardsCorrect()) {
+              moveToNextStage(INCREMENT_VALUE);
+          }
       } else {
-        // Handle incorrect selection for a board card
-        tappedCard.classList.add('incorrect');
-        selectedCard.classList.remove('selected');
-        selectedCard = null;
+          // Incorrect match
+          tappedCard.classList.add('incorrect');
+          if (selectedCard) {
+              selectedCard.classList.remove('selected');
+          }
+          selectedCard = null; // Clear the selected card variable
       }
-    }
   }
+}
   
 
   let correctAnswersCount = 0;  // Shared counter for correct answers by any player
   const successfulDrops = new Set();  // Set to keep track of successful card-target pairs
   
   function handleCardDrop(event, increment) {
-      event.preventDefault();
-      console.log("Card drop event handled");
-  
-      const playerNumber = new URLSearchParams(window.location.search).get('player');
-      if (!playerNumber) {
-          console.error("Invalid player number. Cannot process card drop.");
-          return;
-      }
-  
-      const draggedCardValue = parseInt(event.dataTransfer.getData('text'), 10);
-      const targetCard = event.target.closest('.card');
-      if (!targetCard) {
-          console.error("Card drop target not found. Cannot process card drop.");
-          return;
-      }
-  
-      const boardCardValue = parseInt(targetCard.querySelector('.card-value').textContent, 10);
-      const playerRef = (playerNumber === '1') ? player1Ref : player2Ref;
-  
-      // Generate a unique identifier for this particular card-target combination
-      const dropIdentifier = `player${playerNumber}-card${draggedCardValue}-target${boardCardValue}`;
-  
-      // Reset the visual state before applying new result
-      targetCard.classList.remove('correct', 'incorrect');
-  
-      if (draggedCardValue === boardCardValue + increment) {
-          if (!successfulDrops.has(dropIdentifier)) {
-              console.log(`Correct card dropped by Player ${playerNumber}`);
-              updatePlayerScore(playerRef, 10);  // Update score in Firebase and UI
-              successfulDrops.add(dropIdentifier);  // Add this pair to the set to prevent future score updates
-              targetCard.classList.add('correct');
-  
-              // Increment the correct answers counter for any correct drop
-              correctAnswersCount++;
-              if (correctAnswersCount >= 4) {
-                  // Only shuffle on non-small screens
-                  if (!window.matchMedia("(max-width: 768px)").matches) {
-                      shuffleAllCards();  // Shuffle all cards function
-                  }
-                  correctAnswersCount = 0;  // Reset the count
-                  successfulDrops.clear();  // Clear the set of successful drops
-              }
-          } else {
-              console.log(`Repeat correct card drop detected, no score added`);
-          }
-      } else {
-          console.error(`Incorrect card dropped by Player ${playerNumber}`);
-          targetCard.classList.add('incorrect');
-          targetCard.querySelector('.card-value').style.visibility = 'visible'; // Ensure the incorrect value is visible for player feedback
-      }
-  }
+    event.preventDefault();
+    console.log("Card drop event handled");
+
+    const playerNumber = new URLSearchParams(window.location.search).get('player');
+    if (!playerNumber) {
+        console.error("Invalid player number. Cannot process card drop.");
+        return;
+    }
+
+    const draggedCardValue = parseInt(event.dataTransfer.getData('text'), 10);
+    const targetCard = event.target.closest('.card');
+    if (!targetCard) {
+        console.error("Card drop target not found. Cannot process card drop.");
+        return;
+    }
+
+    const boardCardValue = parseInt(targetCard.querySelector('.card-value').textContent, 10);
+    const playerRef = (playerNumber === '1') ? player1Ref : player2Ref;
+
+    // Generate a unique identifier for this particular card-target combination
+    const dropIdentifier = `player${playerNumber}-card${draggedCardValue}-target${boardCardValue}`;
+
+    // Reset the visual state before applying new result
+    targetCard.classList.remove('correct', 'incorrect');
+
+    if (draggedCardValue === boardCardValue + increment) {
+        if (!successfulDrops.has(dropIdentifier)) {
+            console.log(`Correct card dropped by Player ${playerNumber}`);
+            updatePlayerScore(playerRef, 10);  // Update score in Firebase and UI
+            successfulDrops.add(dropIdentifier);  // Add this pair to the set to prevent future score updates
+            targetCard.classList.add('correct');
+
+            // Remove the card from the player's hand
+            if (selectedCard) {
+                selectedCard.parentNode.removeChild(selectedCard);
+            }
+
+            // Increment the correct answers counter for any correct drop
+            correctAnswersCount++;
+            if (correctAnswersCount >= 4) {
+                // Only shuffle on non-small screens
+                if (!window.matchMedia("(max-width: 768px)").matches) {
+                    shuffleAllCards();  // Shuffle all cards function
+                }
+                correctAnswersCount = 0;  // Reset the count
+                successfulDrops.clear();  // Clear the set of successful drops
+            }
+        } else {
+            console.log(`Repeat correct card drop detected, no score added`);
+        }
+    } else {
+        console.error(`Incorrect card dropped by Player ${playerNumber}`);
+        targetCard.classList.add('incorrect');
+        targetCard.querySelector('.card-value').style.visibility = 'visible'; // Ensure the incorrect value is visible for player feedback
+    }
+}
+
   
 
 
@@ -790,23 +798,25 @@ function shuffleArray(array) {
 
 
 function setupTapEvents() {
-    playersHand.addEventListener('click', function(event) {
-        let targetCard = event.target.closest('.card');
-        if (targetCard && targetCard.parentNode === playersHand && selectedCard !== targetCard) {
-            handleCardSelection(targetCard);
-            playDragSound();  // Play sound on selecting a card from the hand
-        }
-    });
+  // Setup tap event for player's hand
+  playersHand.addEventListener('click', function(event) {
+      let targetCard = event.target.closest('.card');
+      if (targetCard && targetCard.parentNode === playersHand && selectedCard !== targetCard) {
+          handleCardSelection(targetCard);
+          playDragSound();  // Play sound on selecting a card from the hand
+      }
+  });
 
-    gameBoard.addEventListener('click', function(event) {
-        let targetCard = event.target.closest('.card');
-        if (selectedCard && targetCard && targetCard.parentNode === gameBoard) {
-            validateCardSelection(targetCard, selectedCard);
-            playDragSound();  // Play sound on validating card placement
-            selectedCard.classList.remove('selected');
-            selectedCard = null;  // Deselect after placing
-        }
-    });
+  // Setup tap event for game board
+  gameBoard.addEventListener('click', function(event) {
+      let targetCard = event.target.closest('.card');
+      if (selectedCard && targetCard && targetCard.parentNode === gameBoard) {
+          validateCardSelection(targetCard, selectedCard);
+          playDragSound();  // Play sound on validating card placement
+          selectedCard.classList.remove('selected');
+          selectedCard = null;  // Deselect after placing
+      }
+  });
 }
 
 function handleCardSelection(card) {
@@ -835,6 +845,8 @@ function handleCardSelection(card) {
 
 const successfulTaps = new Set();  // Set to keep track of successful card-target pairs
 
+
+
 function validateCardSelection(boardCard, playerCard) {
   const boardValue = parseInt(boardCard.querySelector('.card-value').textContent.trim());
   const playerValue = parseInt(playerCard.querySelector('.card-value').textContent.trim());
@@ -843,29 +855,34 @@ function validateCardSelection(boardCard, playerCard) {
 
   const dropIdentifier = `${playerNumber}-card${playerValue}-target${boardValue}`;
 
-  boardCard.classList.remove('correct', 'incorrect');  // Reset previous state
+  // Reset previous states
+  boardCard.classList.remove('correct', 'incorrect');
+  boardCard.querySelector('.card-value').style.visibility = 'visible'; // Always show the card value initially
 
   if (playerValue === boardValue + INCREMENT_VALUE) {
-      if (!successfulTaps.has(dropIdentifier)) {  // Check if this card-target pair hasn't been used for scoring
+      if (!successfulTaps.has(dropIdentifier)) { // Prevents scoring for already successful card-target pairs
           boardCard.classList.add('correct');
-          updatePlayerScore(playerRef, 10);  // Update score in Firebase and UI
-          successfulTaps.add(dropIdentifier);  // Add this pair to the set to prevent future score updates
+          updatePlayerScore(playerRef, 10); // Update score in Firebase and UI
+          successfulTaps.add(dropIdentifier); // Register this successful tap
 
-          correctAnswersCount++;  // Increment the counter for correct answers
+          correctAnswersCount++; // Track number of correct answers
+
+          // Hide the correctly played card from the player's hand
+          playerCard.style.display = 'none';
+
+          // Check if it's time to shuffle and reset
           if (correctAnswersCount >= 4) {
-              shuffleAllCards();  // Shuffle all cards on the board
-              correctAnswersCount = 0;  // Reset the counter after shuffling
-              successfulTaps.clear();  // Clear successful taps after shuffling
+              shuffleAllCards(); // Shuffle all cards on the board
+              correctAnswersCount = 0; // Reset the correct answers count
+              successfulTaps.clear(); // Clear recorded successful taps
           }
       } else {
-          console.log("Repeat correct tap detected, no score added.");
+          console.log("Repeat correct tap detected, no score added."); // Log an attempted repeat of a successful action
       }
   } else {
-      boardCard.classList.add('incorrect');
-      boardCard.querySelector('.card-value').style.visibility = 'visible';  // Show the card value if not correct
+      boardCard.classList.add('incorrect'); // Incorrect answer logic
   }
 }
-
 
 
 
@@ -883,9 +900,10 @@ function removeStatusMessage(card) {
     }
 }
 
+
 function checkIfAllCardsCorrect() {
-  const cards = document.querySelectorAll('.card.correct');
-  return cards.length === document.querySelectorAll('.card').length; // Checks if all cards are correct
+  const cards = gameBoard.querySelectorAll('.card.correct');
+  return cards.length === gameBoard.querySelectorAll('.card').length;
 }
 
 
@@ -915,15 +933,22 @@ function setupDragAndDropEvents() {
 
 
 
+
 function handleDragStart(event) {
-    event.dataTransfer.setData('text', event.target.textContent.trim());
-    selectedCard = event.target; // Storing the selected card for drop validation
+  event.dataTransfer.setData('text', event.target.textContent.trim());
+  selectedCard = event.target; // Storing the selected card for drop validation
+  playDragSound(); // Ensures sound plays on drag start
+  // Set the opacity of the dragging card to less visible
+  selectedCard.style.opacity = '0.2'; 
 }
 
 function handleDragEnd(event) {
-    selectedCard = null; // Clear the selected card once dragging ends
+  // Reset the opacity of the dragging card to fully visible
+  if (selectedCard) {
+      selectedCard.style.opacity = '2'; 
+  }
+  selectedCard = null; // Clear the selected card once dragging ends
 }
-
 
 function handleDragOver(event) {
     event.preventDefault();
