@@ -1,7 +1,7 @@
 let gameTimer;
 let score = 0;
 let isPlaying = false;
-let isMusicPlaying = true;
+let isMusicPlaying = false; // Set isMusicPlaying to false initially
 let player1Score = 0;
 let player2Score = 0;
 let selectedCard = null;
@@ -21,6 +21,8 @@ const gamePage = document.getElementById('game-page');
 const playOfflineButton = document.getElementById('play-offline');
 const playOnlineButton = document.getElementById('play-online');
 const toggleMusicButton = document.getElementById('toggle-music');
+const bgMusic = document.getElementById('bg-music'); // Get the background music element
+
 
 document.getElementById('play-offline').addEventListener('click', function() {
     document.getElementById('start-page').classList.add('hidden'); // Hide the start page
@@ -104,19 +106,17 @@ function startOfflineGame() {
 
     // Set game state as playing
     isPlaying = true;
-    
-    // Try starting the music, if not already playing
-    if (!isMusicPlaying) {
-        toggleMusic();  // This will check the state and play the music if needed
-    }
 
-    
+    // Start the background music
+    bgMusic.play();
+    isMusicPlaying = true;
+
     // Reset and update scores
     score = 0;
     player1Score = 0;
     player2Score = 0;
-    updateScore(0);  // Reset the score display to 0
-    updatePlayerScores();  // Update player scores displays
+    updateScore(0); // Reset the score display to 0
+    updatePlayerScores(); // Update player scores displays
 
     // Start the game timer
     startTimer(gameTime);
@@ -128,7 +128,6 @@ function startOfflineGame() {
     gamePage.classList.remove('hidden');
     document.getElementById('player-info').classList.add('hidden');
 }
-
 
 
 
@@ -167,6 +166,9 @@ function startTimer(duration) {
 function endGame() {
     isPlaying = false;
     clearInterval(gameTimer);
+
+    bgMusic.pause();
+    isMusicPlaying = false;
 
     const modalOverlay = document.createElement('div');
     modalOverlay.className = 'modal-overlay';
@@ -277,9 +279,12 @@ function setupGameBoard(increment) {
     gameBoard.innerHTML = '';
     let boardCardValues = [];
 
-    // Generate board card values ensuring they allow space for the increment
-    for (let i = 0; i < 4; i++) {
-        boardCardValues.push(getRandomNumber(1, 50 - increment));
+    // Generate board card values ensuring they are unique and allow space for the increment
+    while (boardCardValues.length < 4) {
+        const randomValue = getRandomNumber(1, 50 - increment);
+        if (!boardCardValues.includes(randomValue)) {
+            boardCardValues.push(randomValue);
+        }
     }
 
     // Shuffle the values to randomize the game board
@@ -300,7 +305,6 @@ function setupGameBoard(increment) {
     // Load player cards that could potentially match the board cards
     loadPlayersCards(boardCardValues, increment);
 }
-
 
 function updateScore(increment = 10) {
     if (!increment) {
