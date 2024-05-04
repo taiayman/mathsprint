@@ -185,6 +185,7 @@ const firebaseConfig = {
         startTime = Date.now();
         gameTimer = setInterval(checkGameEndCondition, 1000);
   
+        isMusicPlaying = true; // Set isMusicPlaying to false initially
         isPlaying = true;
         toggleMusic(); // Start music if that is part of the initial game setup
   
@@ -235,7 +236,7 @@ const firebaseConfig = {
   
   let score = 0;
   let isPlaying = false;
-  let isMusicPlaying = true;
+  let isMusicPlaying = false; // Set isMusicPlaying to false initially
   let player1Score = 0;
   let player2Score = 0;
   let selectedCard = null;
@@ -321,6 +322,10 @@ function startTimer() {
 function endGame() {
   isPlaying = false;
   clearInterval(gameTimer);
+
+  const bgMusic = document.getElementById('bg-music');
+  bgMusic.pause();
+  isMusicPlaying = false;
 
   // Check if a modal is already displayed
   const existingModal = document.querySelector('.modal-overlay');
@@ -432,34 +437,36 @@ return increment;
 }
 
 function setupGameBoard(increment) {
-// Clear the game board to prepare for new game setup
-gameBoard.innerHTML = '';
-let boardCardValues = [];
+  // Clear the game board to prepare for new game setup
+  gameBoard.innerHTML = '';
+  let boardCardValues = [];
 
-// Generate board card values ensuring they allow space for the increment
-for (let i = 0; i < 4; i++) {
-  boardCardValues.push(getRandomNumber(1, 50 - increment));
-}
-
-// Shuffle the values to randomize the game board
-shuffleArray(boardCardValues);
-
-// Create and append board cards to the game board
-boardCardValues.forEach(value => {
-  let card = createCardElement(value, false);  // Cards are not draggable by default
-  gameBoard.appendChild(card);
-  
-  // Attach drag event listeners only on large screens
-  if (isLargeScreen()) {
-    card.addEventListener('dragover', handleDragOver);
-    card.addEventListener('drop', (event) => handleCardDrop(event, increment));
+  // Generate board card values ensuring they are unique and allow space for the increment
+  while (boardCardValues.length < 4) {
+      const randomValue = getRandomNumber(1, 50 - increment);
+      if (!boardCardValues.includes(randomValue)) {
+          boardCardValues.push(randomValue);
+      }
   }
-});
 
-// Load player cards that could potentially match the board cards
-loadPlayersCards(boardCardValues, increment);
+  // Shuffle the values to randomize the game board
+  shuffleArray(boardCardValues);
+
+  // Create and append board cards to the game board
+  boardCardValues.forEach(value => {
+      let card = createCardElement(value, false);  // Cards are not draggable by default
+      gameBoard.appendChild(card);
+      
+      // Attach drag event listeners only on large screens
+      if (isLargeScreen()) {
+          card.addEventListener('dragover', handleDragOver);
+          card.addEventListener('drop', (event) => handleCardDrop(event, increment));
+      }
+  });
+
+  // Load player cards that could potentially match the board cards
+  loadPlayersCards(boardCardValues, increment);
 }
-
 
 function playCorrectSound() {
 const correctSound = document.getElementById('correct-sound'); // Make sure this ID matches your <audio> element
