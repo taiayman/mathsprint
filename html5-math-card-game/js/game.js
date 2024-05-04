@@ -484,7 +484,8 @@ function handleCardDrop(event, increment) {
         if (boardCardValueSpan) {
             const boardCardValue = parseInt(boardCardValueSpan.textContent, 10);
 
-            if (!isNaN(draggedCardValue) && !isNaN(boardCardValue)) {
+            // Check if the card has already been matched correctly and skip further checks if so
+            if (!targetCard.classList.contains('correct')) {
                 const isCorrect = (draggedCardValue === boardCardValue + increment);
                 if (isCorrect) {
                     updateScore(10); // Add 10 to the score
@@ -510,12 +511,12 @@ function handleCardDrop(event, increment) {
                         moveToNextStage(increment);
                     }
                 } else {
-                    targetCard.classList.add('incorrect');
-                    targetCard.classList.remove('correct');
-                    boardCardValueSpan.style.visibility = 'visible'; // Re-display the card number for incorrect guesses
+                    if (!targetCard.classList.contains('correct')) {
+                        targetCard.classList.add('incorrect');
+                        targetCard.classList.remove('correct');
+                        boardCardValueSpan.style.visibility = 'visible'; // Re-display the card number for incorrect guesses
+                    }
                 }
-            } else {
-                console.error('One of the card values is not a number.');
             }
         } else {
             console.error('card-value element not found');
@@ -678,10 +679,18 @@ function validateCardSelection(boardCard, playerCard) {
     const boardValue = parseInt(boardCard.querySelector('.card-value').textContent.trim());
     const playerValue = parseInt(playerCard.querySelector('.card-value').textContent.trim());
 
+    // Check if the board card is already marked as correct
+    if (boardCard.classList.contains('correct')) {
+        // Do nothing if the card has already been matched correctly
+        return;
+    }
+
     if (playerValue === boardValue + INCREMENT_VALUE) {
         boardCard.classList.add('correct');
         boardCard.classList.remove('incorrect');
-        
+        boardCard.removeEventListener('dragover', handleDragOver); // Remove drag over event listener
+        boardCard.removeEventListener('drop', handleCardDrop); // Remove drop event listener
+
         const correctMessage = boardCard.querySelector('.correct-message') || document.createElement('span');
         correctMessage.classList.add('correct-message');
         boardCard.appendChild(correctMessage);
@@ -695,13 +704,14 @@ function validateCardSelection(boardCard, playerCard) {
             moveToNextStage(INCREMENT_VALUE);
         }
     } else {
-        boardCard.classList.add('incorrect');
-        boardCard.classList.remove('correct');
-        boardCard.querySelector('.card-value').style.visibility = 'visible'; // Show the card value if not correct
+        // Only add the 'incorrect' class if the card is not already marked as 'correct'
+        if (!boardCard.classList.contains('correct')) {
+            boardCard.classList.add('incorrect');
+            boardCard.classList.remove('correct');
+            boardCard.querySelector('.card-value').style.visibility = 'visible'; // Show the card value if not correct
+        }
     }
 }
-
-
 
 
 function addStatusMessage(card, message) {
