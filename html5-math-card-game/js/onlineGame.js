@@ -641,6 +641,12 @@ function handleCardTap(event) {
     const boardCardValue = parseInt(targetCard.querySelector('.card-value').textContent, 10);
     const playerRef = (playerNumber === '1') ? player1Ref : player2Ref;
 
+    // Check if the card has already been matched correctly and prevent state reversion
+    if (targetCard.classList.contains('correct')) {
+        console.log("Drop on already correctly matched card. No action taken.");
+        return;
+    }
+
     // Generate a unique identifier for this particular card-target combination
     const dropIdentifier = `player${playerNumber}-card${draggedCardValue}-target${boardCardValue}`;
 
@@ -853,25 +859,24 @@ function handleCardSelection(card) {
 const successfulTaps = new Set();  // Set to keep track of successful card-target pairs
 
 
-
 function validateCardSelection(boardCard, playerCard) {
   const boardValue = parseInt(boardCard.querySelector('.card-value').textContent.trim());
   const playerValue = parseInt(playerCard.querySelector('.card-value').textContent.trim());
+
   const playerNumber = new URLSearchParams(window.location.search).get('player');
   const playerRef = (playerNumber === '1') ? player1Ref : player2Ref;
-
   const dropIdentifier = `${playerNumber}-card${playerValue}-target${boardValue}`;
 
   // Reset previous states
-  boardCard.classList.remove('correct', 'incorrect');
+  boardCard.classList.remove('incorrect');
   boardCard.querySelector('.card-value').style.visibility = 'visible'; // Always show the card value initially
 
   if (playerValue === boardValue + INCREMENT_VALUE) {
-      if (!successfulTaps.has(dropIdentifier)) { // Prevents scoring for already successful card-target pairs
+      if (!successfulTaps.has(dropIdentifier)) {
+          // Prevents scoring for already successful card-target pairs
           boardCard.classList.add('correct');
           updatePlayerScore(playerRef, 10); // Update score in Firebase and UI
           successfulTaps.add(dropIdentifier); // Register this successful tap
-
           correctAnswersCount++; // Track number of correct answers
 
           // Hide the correctly played card from the player's hand
@@ -887,10 +892,12 @@ function validateCardSelection(boardCard, playerCard) {
           console.log("Repeat correct tap detected, no score added."); // Log an attempted repeat of a successful action
       }
   } else {
-      boardCard.classList.add('incorrect'); // Incorrect answer logic
+      // Only add the 'incorrect' class if the card is not already marked as 'correct'
+      if (!boardCard.classList.contains('correct')) {
+          boardCard.classList.add('incorrect');
+      }
   }
 }
-
 
 
 function addStatusMessage(card, message) {
